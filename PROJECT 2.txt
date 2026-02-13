@@ -1,0 +1,194 @@
+PROJECT : "CORPORATE DATA ANALYSIS SYSTEM"
+
+============CUSTOMER INFORMATON MANAGEMENT====================
+
+#CREATE TABLE:
+
+CREATE TABLE customer(
+    customer_id INT PRIMARY KEY,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    email VARCHAR(100),
+    registration_date DATE
+);
+   
+#INSERT RECORD:
+
+INSERT INTO customer
+VALUES
+(1,'john','doe','john.doe@email.com','2022-03-15'),
+(2,'jane','smith','jane.smith@email.com','2021-11-02'),
+(3,'alice','goni','alice.goni@email.com','2020-07-30'),
+(4,'bob','sharma','bob.sharma@email.com','2020-9-21'),
+(5,'charlie','dave','charlie.dave@email.com','2019-01-19');
+
+
+================SALES TRANSACTION PROCESSING=================
+
+#CREATE TABLE:
+
+CREATE TABLE orders(
+    orde_id INT PRIMARY KEY,
+    customer_id INT,
+    order_date DATE,
+    total_amount DECIMAL(10,2),
+    FOREIGN KEY(customer_id) REFERENCES  customer(customer_id)
+);
+
+#INSERT RECORD:
+
+INSERT INTO orders
+VALUES
+(101,1,'2023-07-01',150.50),
+(102,2,'2023-07-03',200.75),
+(103,3,'2023-07-07',500.25),
+(104,4,'2023-07-09',300.25),
+(105,5,'2023-07-11',700.50);
+
+
+==================EMPLOYEE PERFORMANCE DATA============
+
+#CREATE TABLE:
+
+CREATE TABLE employee(
+    employee_id INT PRIMARY KEY,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    department VARCHAR(50),
+    hire_date DATE,
+    salary DECIMAL(10,2)
+);
+
+#INSERT RECORD:
+
+INSERT INTO employee
+VALUES
+(1001,'mark','johnson','sales','2020-01-15',50000),
+(1002,'susan','lee','HR','2021-03-20',55000),
+(1003,'eve','rushom','market','2021-07-19',40000),
+(1004,'david','greek','IT','2022-10-20',75000),
+(1005,'mac','willam','market','2023-05-05',35000);
+
+
+*******Queries To Perform*******
+
+Question:1
+
+SELECT orders.orde_id,orders.order_date,orders.total_amount,customer.customer_id,customer.first_name,customer.last_name
+FROM orders
+INNER JOIN customer
+ON orders.customer_id = customer.customer_id;
+
+Question:2
+
+SELECT customer.customer_id,customer.first_name,customer.last_name,orders.orde_id
+FROM customer
+LEFT JOIN orders
+ON customer.customer_id = orders.customer_id;
+
+Question:3
+
+SELECT orders.orde_id,customer.customer_id,customer.first_name,customer.last_name
+FROM orders
+RIGHT JOIN customer
+ON orders.customer_id = customer.customer_id;
+
+Question:4
+
+SELECT customer.customer_id,customer.first_name,customer.last_name,orders.orde_id
+FROM customer
+LEFT JOIN orders
+ON customer.customer_id = orders.customer_id
+
+UNION
+
+SELECT customer.customer_id,customer.first_name,customer.last_name,orders.orde_id
+FROM customer
+RIGHT JOIN orders
+ON customer.customer_id = orders.customer_id;
+
+Question:5
+
+SELECT DISTINCT customer_id ,total_amount
+FROM orders
+WHERE total_amount > (SELECT AVG(total_amount) FROM orders);
+
+Question:6
+
+SELECT* FROM employee
+WHERE salary >(SELECT AVG(salary) FROM employee);
+
+Question:7
+
+SELECT orde_id ,order_date, YEAR(order_date) AS orders_year,
+MONTH(order_date) AS order_month
+FROM orders;
+
+Question:8
+
+SELECT orde_id ,order_date,DATEDIFF(CURRENT_DATE,order_date)  AS Difference_of_date
+FROM orders;
+
+
+Question:9
+
+SELECT orde_id ,order_date,DATE_FORMAT(order_date,'%d-%m-%y') AS Converted_date
+FROM orders;
+
+Question:10
+
+SELECT customer_id, CONCAT(first_name,'',last_name) AS full_name
+FROM customer;
+
+Question:11
+
+SELECT first_name,last_name,
+REPLACE (first_name,'john','jonathan') AS Change_name
+FROM customer;
+
+Question:12
+
+SELECT first_name,last_name,UPPER(first_name),LOWER(last_name)
+FROM customer;
+
+Question:13
+
+SELECT email, TRIM(email)
+FROM customer;
+
+Question:14
+
+SELECT orde_id ,total_amount ,
+SUM(total_amount) OVER(ORDER BY order_date) AS running_total
+FROM orders;
+
+Question:15
+
+SELECT orde_id ,total_amount,
+RANK() OVER(ORDER BY total_amount DESC)
+FROM orders;
+
+Question:16
+
+SELECT orde_id,total_amount,
+CASE 
+WHEN total_amount > 100
+THEN '10% OFF'
+WHEN total_amount >50
+THEN '5% OFF'
+ELSE 'NO DISCONT'
+END AS DISCOUNTAPPLIED
+FROM orders;
+
+Question:17
+
+SELECT employee_id ,Salary,
+CASE
+WHEN Salary > 70000 THEN 'HIGH'
+WHEN Salary >45000 THEN 'MEDIUM'
+ELSE 'LOE'
+END AS SALARYCATEGARY
+FROM employee;
+
+
+
